@@ -11,7 +11,7 @@ func Register(c *gin.Context) {
 	user.email = c.PostForm("email")
 	user.password = c.PostForm("password")
 	user.userId = generateUserId()
-	genetateUser(user)
+	generateUser(user)
 	c.String(http.StatusOK, "Hello, %s", user.username)
 
 }
@@ -20,7 +20,7 @@ func generateUserId() int64 {
 	return 0
 }
 
-func genetateUser(user *Users) int{
+func generateUser(user *Users) int{
 	// user -> database
 	return 0
 }
