@@ -23,13 +23,13 @@ const (
 	UserInfo = 0
 )
 
-func Connect(db int) (*redis.Client, int) {
+func connect(db int) (*redis.Client, int) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "127.0.0.1:6379",
 		Password: "",
 		DB:       db})
 
-	pong, err := client.Ping().Result()
+	_, err := client.Ping().Result()
 	if err != nil {
 		fmt.Println("error", err)
 		return nil, ConnectErr
@@ -38,14 +38,13 @@ func Connect(db int) (*redis.Client, int) {
 	return client, OperationSuccess
 }
 
-func CloseClient(cli *redis.Client) error {
-	err := cli.Close()
-	return err
-}
-
-func Insert(cli *redis.Client, key string, fields map[string]interface{}) (int, int) {
+func Insert(db int, key string, fields map[string]interface{}) (int, int) {
 	insertStatus := 0
-
+	cli, e := connect(db)
+	if cli == nil {
+		fmt.Println("Error:", e)
+		return ConnectErr, OperationFailed
+	}
 	// confirm if exists
 	val, err := cli.HGetAll(key).Result()
 	if err != nil {
@@ -66,9 +65,33 @@ func Insert(cli *redis.Client, key string, fields map[string]interface{}) (int, 
 	lock.Unlock()
 
 	// close client
-	err = CloseClient(cli)
+	err = cli.Close()
 	if err != nil {
 		return CloseErr, OperationFailed
 	}
 	return InsertSuccess, OperationSuccess
+}
+
+func Lookup(db int, key string) (*map[string]string, int) {
+
+	cli, e := connect(db)
+	if cli == nil {
+		fmt.Println("Error:", e)
+		return nil, ConnectErr
+	}
+
+	val, err := cli.HGetAll(key).Result()
+	if err != nil {
+		return nil, GetFailed
+	}
+	if len(val) == 0 {
+		return nil, GetFailed
+	}
+
+	err = cli.Close()
+	if err != nil {
+		return nil, OperationFailed
+	}
+
+	return &val, OperationSuccess
 }

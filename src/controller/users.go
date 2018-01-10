@@ -1,5 +1,7 @@
 package controller
 
+import "strconv"
+
 type Users struct {
 	username string
 	email    string
@@ -17,11 +19,11 @@ func UsersConvertToMap(user *Users) map[string]interface{} {
 	return fields
 }
 
-func MapConvertToUser(fields map[string]interface{}) *Users {
+func MapConvertToUser(fields map[string]string) *Users {
 	u := new(Users)
-	u.username = fields["username"].(string)
-	u.password = fields["password"].(string)
-	u.email = fields["email"].(string)
-	u.userId = fields["userId"].(int64)
+	u.username = fields["username"]
+	u.password = fields["password"]
+	u.email = fields["email"]
+	u.userId, _ = strconv.ParseInt(fields["userId"], 10, 64)
 	return u
 }

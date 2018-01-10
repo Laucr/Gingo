@@ -13,8 +13,11 @@ func Register(c *gin.Context) {
 	user.email = c.PostForm("email")
 	user.password = c.PostForm("password")
 	user.userId = generateUserId()
-	generateUser(user)
-	c.String(http.StatusOK, "Hello, %s", user.username)
+	if generateUser(user) == InsertSuccess {
+		c.String(http.StatusOK, "Hello, %s", user.username)
+	} else {
+		c.String(http.StatusOK, "Sorry, failed to register")
+	}
 
 }
 
@@ -28,19 +31,12 @@ func generateUserId() int64 {
 func generateUser(user *Users) int {
 	// user -> database
 	u := UsersConvertToMap(user)
-	cli, err := Connect(UserInfo)
-	if cli == nil {
-		fmt.Println("Error:", err)
-		return ConnectErr
-	}
 
 	// insert_result function_result
-	insr, funcr := Insert(cli, user.username, u)
+	insr, funcr := Insert(UserInfo, user.username, u)
 	if funcr != OperationSuccess {
 		fmt.Println("Error:", insr)
 	}
-
-	CloseClient(cli)
 
 	return insr
 }
