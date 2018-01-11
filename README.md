@@ -5,7 +5,6 @@ Install Golang environment as [Go](https://golang.org/).
 Install Redis according as [Redis](https://redis.io/).  
   
 Set your **gopath** and **goroot**.
-> For [GoLand](https://www.jetbrains.com/go/) users, you show add your work dir into the gopath.  
 
 ## Dependencies
 **Gin**
@@ -13,5 +12,10 @@ Set your **gopath** and **goroot**.
 **Redis**
 <pre><code>$ go get github.com/go-redis/redis</code></pre>
 
+## Especially for [GoLand](https://www.jetbrains.com/go/) users  
+> First, you should add your work dir into the gopath.  
+  
+> Then edit Run/Debug Configurations to change the Working directory into "$Project_dir\src\main".  
+
 ## Most of all
-### Compile and run the main.go ;)  
+### Compile and run the main.go ;) 
