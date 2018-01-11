@@ -16,6 +16,7 @@ const (
 	InsertSuccess    = 100
 	InsertKeyExist   = -101
 	GetFailed        = -200
+	GetKeyNotExist	 = -201
 )
 
 // Databases
@@ -85,7 +86,7 @@ func Lookup(db int, key string) (*map[string]string, int) {
 		return nil, GetFailed
 	}
 	if len(val) == 0 {
-		return nil, GetFailed
+		return nil, GetKeyNotExist
 	}
 
 	err = cli.Close()
