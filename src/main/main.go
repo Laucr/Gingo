@@ -4,11 +4,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"controller"
 	"net/http"
+	"path/filepath"
 )
 
 func main() {
 	router := gin.Default()
-	router.LoadHTMLGlob("src/main/*.html")
+	workDir, _ := filepath.Abs(".")
+	router.LoadHTMLGlob(filepath.Join(workDir, "../templates/*.html"))
 	router.POST("/register/submit", controller.Register)
 	router.POST("/login/submit", controller.PostLogin)
 	router.GET("/index", func(c *gin.Context) {
