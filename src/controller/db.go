@@ -14,14 +14,16 @@ const (
 	ConnectErr       = -10
 	InsertFailed     = -100
 	InsertSuccess    = 100
-	InsertKeyExist   = -101
+	InsertKeyExists  = -101
 	GetFailed        = -200
-	GetKeyNotExist	 = -201
+	GetKeyNotExist   = -201
+	SessionExists    = -301
 )
 
 // Databases
 const (
-	UserInfo = 0
+	DbUserInfo = 0
+	DbSession  = 1
 )
 
 func connect(db int) (*redis.Client, int) {
@@ -52,7 +54,7 @@ func Insert(db int, key string, fields map[string]interface{}) (int, int) {
 		return GetFailed, OperationFailed
 	}
 	if len(val) != 0 {
-		insertStatus = InsertKeyExist
+		insertStatus = InsertKeyExists
 		return insertStatus, OperationFailed
 	}
 

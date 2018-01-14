@@ -9,14 +9,19 @@ import (
 
 func Register(c *gin.Context) {
 	user := new(Users)
-	user.username = c.PostForm("username")
-	user.email = c.PostForm("email")
+	user.userName = c.PostForm("userName")
 	user.password = c.PostForm("password")
 	user.userId = generateUserId()
+
 	if generateUser(user) == InsertSuccess {
-		c.String(http.StatusOK, "Hello, %s", user.username)
+		//c.String(http.StatusOK, "Hello, %s", user.userName)
+		c.JSON(http.StatusOK, gin.H{
+			"status":   InsertSuccess,
+			"username": user.userName})
 	} else {
-		c.String(http.StatusOK, "Sorry, failed to register")
+		//c.String(http.StatusOK, "Sorry, failed to register")
+		c.JSON(http.StatusOK, gin.H{
+			"status": InsertFailed})
 	}
 
 }
@@ -33,10 +38,10 @@ func generateUser(user *Users) int {
 	u := UsersConvertToMap(user)
 
 	// insert_result function_result
-	insr, funcr := Insert(UserInfo, user.username, u)
-	if funcr != OperationSuccess {
-		fmt.Println("Error:", insr)
+	insRes, funcRes := Insert(DbUserInfo, user.userName, u)
+	if funcRes != OperationSuccess {
+		fmt.Println("Error:", insRes)
 	}
 
-	return insr
+	return insRes
 }
