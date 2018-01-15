@@ -11,20 +11,19 @@ type Users struct {
 	password string
 }
 
-type Email struct {
-	email  string
-	userId int64
+type UserBasicInfo struct {
+	UserId     int
+	Password   string
+	UserName   string
+	Email      string
+	Tel        string
+	CreateTime int
 }
 
-type Tel struct {
-	tel    string
-	userId int64
-}
-
-type UserInfo struct {
-	userId int64
-	city   [2]string
-	bars   [2]string
+type UserAdvInfo struct {
+	UserId int
+	City string
+	Bars string
 }
 
 type JsonClosure struct {

@@ -45,3 +45,7 @@ func generateUser(user *Users) int {
 
 	return insRes
 }
+
+func createUserBasicInfo(u *UserBasicInfo) int {
+	return 0
+}
