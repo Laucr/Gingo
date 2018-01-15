@@ -30,7 +30,7 @@ func PostLogin(c *gin.Context) {
 
 func login(username string, password string) (*Users, int) {
 	// compare with database
-	val, err := Lookup(DbUserInfo, username)
+	val, err := RedisLookup(DbUsers, username)
 	if val == nil {
 		fmt.Println("Error:", err)
 		return nil, LoginFailed

@@ -38,7 +38,7 @@ func generateUser(user *Users) int {
 	u := UsersConvertToMap(user)
 
 	// insert_result function_result
-	insRes, funcRes := Insert(DbUserInfo, user.userName, u)
+	insRes, funcRes := RedisInsert(DbUsers, user.userName, u)
 	if funcRes != OperationSuccess {
 		fmt.Println("Error:", insRes)
 	}

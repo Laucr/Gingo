@@ -1,11 +1,42 @@
 package controller
 
-import "strconv"
+import (
+	"strconv"
+	"encoding/json"
+)
 
 type Users struct {
+	userId   int64
 	userName string
 	password string
-	userId   int64
+}
+
+type Email struct {
+	email  string
+	userId int64
+}
+
+type Tel struct {
+	tel    string
+	userId int64
+}
+
+type UserInfo struct {
+	userId int64
+	city   [2]string
+	bars   [2]string
+}
+
+type JsonClosure struct {
+	js string
+}
+
+func JsonConvertToMap(j *JsonClosure) (map[string]interface{}, int) {
+	var ret map[string]interface{}
+	if err := json.Unmarshal([]byte(j.js), &ret); err != nil {
+		return nil, OperationFailed
+	}
+	return ret, OperationSuccess
 }
 
 func UsersConvertToMap(user *Users) map[string]interface{} {

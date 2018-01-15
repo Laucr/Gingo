@@ -2,12 +2,9 @@ package controller
 
 func CreateSession(userName string) int {
 
-	val, _ := Lookup(DbSession, userName)
+	val, _ := RedisLookup(DbSession, userName)
 	if val != nil {
 		return SessionExists
-	} else {
-
-		Insert()
 	}
 	return OperationSuccess
 }
