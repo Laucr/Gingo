@@ -4,48 +4,33 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
-	"fmt"
 )
 
 func Register(c *gin.Context) {
-	user := new(Users)
-	user.userName = c.PostForm("userName")
-	user.password = c.PostForm("password")
-	user.userId = generateUserId()
+	user := new(UserBasicInfo)
+	user.UserId = generateUserId()
+	user.Password = c.PostForm("Password")
+	user.UserName = c.PostForm("UserName")
+	user.Email = c.PostForm("Email")
+	user.Tel = c.PostForm("Tel")
+	user.CreateTime = int(time.Now().Unix())
 
-	if generateUser(user) == InsertSuccess {
-		//c.String(http.StatusOK, "Hello, %s", user.userName)
+	c.JSON(http.StatusOK, gin.H{"status": TelExists})
+	c.JSON(http.StatusOK, gin.H{"status": EmailExists})
+
+	if InsertUserBasicInfo(user) == InsertSuccess {
 		c.JSON(http.StatusOK, gin.H{
-			"status":   InsertSuccess,
-			"username": user.userName})
+			"status": InsertSuccess,
+			"userId": user.UserId})
 	} else {
-		//c.String(http.StatusOK, "Sorry, failed to register")
 		c.JSON(http.StatusOK, gin.H{
 			"status": InsertFailed})
 	}
-
 }
 
-func generateUserId() int64 {
+func generateUserId() int {
 	t := time.Now()
-	var base int64 = 1514736000
-	userId := t.Unix() - base
+	var base = 1514736000
+	userId := int(t.Unix()) - base
 	return userId
-}
-
-func generateUser(user *Users) int {
-	// user -> database
-	u := UsersConvertToMap(user)
-
-	// insert_result function_result
-	insRes, funcRes := RedisInsert(DbUsers, user.userName, u)
-	if funcRes != OperationSuccess {
-		fmt.Println("Error:", insRes)
-	}
-
-	return insRes
-}
-
-func createUserBasicInfo(u *UserBasicInfo) int {
-	return 0
 }

@@ -12,6 +12,8 @@ const (
 	GetFailed        = -200
 	GetKeyNotExist   = -201
 	SessionExists    = -301
+	TelExists		 = -51
+	EmailExists	     = -52
 )
 
 
@@ -23,5 +25,5 @@ const (
 	DbUserInfo = 3
 	DbSession  = 4
 
-	MysqlDB = "gingo:@tcp(127.0.0.1:3306)/Users?charset=utf8"
+	MysqlDB = "gingo:gingo@tcp(127.0.0.1:3306)/users?charset=utf8"
 )

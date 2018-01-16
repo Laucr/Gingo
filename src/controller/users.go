@@ -6,9 +6,9 @@ import (
 )
 
 type Users struct {
-	userId   int64
-	userName string
-	password string
+	UserId   int64
+	UserName string
+	Password string
 }
 
 type UserBasicInfo struct {
@@ -38,19 +38,26 @@ func JsonConvertToMap(j *JsonClosure) (map[string]interface{}, int) {
 	return ret, OperationSuccess
 }
 
+func ObjConvertToJson(v interface{}) string {
+	var j string
+	b, _ := json.Marshal(v)
+	j = string(b)
+	return j
+}
+
 func UsersConvertToMap(user *Users) map[string]interface{} {
 	fields := make(map[string]interface{})
-	fields["userName"] = user.userName
-	fields["userId"] = user.userId
-	// TODO: encrypt password here
-	fields["password"] = user.password
+	fields["UserName"] = user.UserName
+	fields["UserId"] = user.UserId
+	// TODO: encrypt Password here
+	fields["Password"] = user.Password
 	return fields
 }
 
 func MapConvertToUser(fields map[string]string) *Users {
 	u := new(Users)
-	u.userName = fields["userName"]
-	u.password = fields["password"]
-	u.userId, _ = strconv.ParseInt(fields["userId"], 10, 64)
+	u.UserName = fields["UserName"]
+	u.Password = fields["Password"]
+	u.UserId, _ = strconv.ParseInt(fields["UserId"], 10, 64)
 	return u
 }
