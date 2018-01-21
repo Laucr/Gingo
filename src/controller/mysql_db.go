@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"fmt"
+	"strings"
 )
 
 func connectMysql(dataSN string) (*sql.DB, int) {
@@ -29,15 +30,23 @@ func InsertUserBasicInfo(u *UserBasicInfo) int {
 		fmt.Println("Error", err)
 		return InsertFailed
 	}
-	defer db.Close()
 	return InsertSuccess
 }
 
-func SelectUserInfo(s string, k string) int {
+func SQLiProof(str string) int {
+	if strings.ContainsAny(str, "`' %&*$#") {
+		return -1
+	}
+	return 0
+}
+
+func SelectUserInfo(key string, value string) int {
 	db, e := connectMysql(MysqlDB)
 	if db == nil {
 		fmt.Println("Error Code", e)
 		return ConnectErr
 	}
+	searchUser := "SELECT UserId FROM `users`.`basic_info` WHERE " + key + "==" + value
+	row, err := db.Query(searchUser)
 	return OperationSuccess
 }
