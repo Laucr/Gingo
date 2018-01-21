@@ -15,9 +15,6 @@ func Register(c *gin.Context) {
 	user.Tel = c.PostForm("Tel")
 	user.CreateTime = int(time.Now().Unix())
 
-	c.JSON(http.StatusOK, gin.H{"status": TelExists})
-	c.JSON(http.StatusOK, gin.H{"status": EmailExists})
-
 	if InsertUserBasicInfo(user) == InsertSuccess {
 		c.JSON(http.StatusOK, gin.H{
 			"status": InsertSuccess,
@@ -25,6 +22,24 @@ func Register(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"status": InsertFailed})
+	}
+}
+
+func CheckEmailExistence(email string, c *gin.Context) {
+	if checkUid, err := SelectUserBasicInfo("Email", email); err != OperationSuccess || checkUid == 0 {
+		c.JSON(http.StatusOK, gin.H{
+			"status": EmailExists,
+			"error": err,
+		})
+	}
+}
+
+func CheckTelExistence(tel string, c *gin.Context) {
+	if checkUid, err := SelectUserBasicInfo("Email", tel); err != OperationSuccess || checkUid == 0 {
+		c.JSON(http.StatusOK, gin.H{
+			"status": TelExists,
+			"error": err,
+		})
 	}
 }
 

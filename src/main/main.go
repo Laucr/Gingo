@@ -27,6 +27,5 @@ func main() {
 
 	router.POST("/register/submit", controller.Register)
 	router.POST("/login/submit", controller.PostLogin)
-
 	router.Run(":51234")
 }

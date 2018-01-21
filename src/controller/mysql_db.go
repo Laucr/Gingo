@@ -35,18 +35,115 @@ func InsertUserBasicInfo(u *UserBasicInfo) int {
 
 func SQLiProof(str string) int {
 	if strings.ContainsAny(str, "`' %&*$#") {
-		return -1
+		return SQLiParameter
 	}
-	return 0
+	return OperationSuccess
 }
 
-func SelectUserInfo(key string, value string) int {
+func SelectUserBasicInfo(key string, value string) (int, int) {
+	db, e := connectMysql(MysqlDB)
+	uid := 0
+	if SQLiProof(value) != OperationSuccess {
+		return uid, SQLiParameter
+	}
+
+	if db == nil {
+		fmt.Println("Error Code", e)
+		return uid, ConnectErr
+	}
+
+	var query string
+
+	switch key {
+	//case "UserName":
+	//	query = "SELECT UserId from `users`.`basic_info` WHERE `UserName` = ?"
+	case "Email":
+		query = "SELECT UserId from `users`.`basic_info` WHERE `Email` = ?"
+	case "Tel":
+		query = "SELECT UserId from `users`.`basic_info` WHERE `Tel` = ?"
+	}
+	row := db.QueryRow(query, value)
+
+	if row == nil {
+		return uid, QueryRowNotExists
+	}
+
+	if err := row.Scan(&uid); err != nil {
+		return uid, QueryFailed
+	}
+
+	return uid, OperationSuccess
+}
+
+func UpdateUserBasicInfo(uid int, key string, value string) int {
+	db, e := connectMysql(MysqlDB)
+	if SQLiProof(value) != OperationSuccess {
+		return SQLiParameter
+	}
+
+	if db == nil {
+		fmt.Println("Error Code", e)
+		return ConnectErr
+	}
+
+	tx, err := db.Begin()
+	if tx == nil {
+		fmt.Println("Error", err)
+		return OperationFailed
+	}
+	var update string
+	switch key {
+	case "UserName":
+		update = "UPDATE `users`.`basic_info` SET `UserName` = ? WHERE `UserId` = ?"
+	case "Email":
+		update = "UPDATE `users`.`basic_info` SET `Email` = ? WHERE `UserId` = ?"
+	case "Tel":
+		update = "UPDATE `users`.`basic_info` SET `Tel` = ? WHERE `UserId` = ?"
+	}
+
+	if _, err = tx.Exec(update, value, uid); err != nil {
+		fmt.Println("Error", err)
+		return OperationFailed
+	}
+	if err = tx.Commit(); err != nil {
+		fmt.Println("Error", err)
+		return OperationFailed
+	}
+	return OperationSuccess
+}
+
+func UpdatePassword(old string, new string, uid int) int {
 	db, e := connectMysql(MysqlDB)
 	if db == nil {
 		fmt.Println("Error Code", e)
 		return ConnectErr
 	}
-	searchUser := "SELECT UserId FROM `users`.`basic_info` WHERE " + key + "==" + value
-	row, err := db.Query(searchUser)
+
+	tx, err := db.Begin()
+	if tx == nil {
+		fmt.Println("Error", err)
+		return OperationFailed
+	}
+
+	query := "SELECT Password from `users`.`basic_info` WHERE `UserId` = ?"
+	row := tx.QueryRow(query, uid)
+	if row == nil {
+		return QueryRowNotExists
+	}
+
+	var password string
+	if err := row.Scan(&password); err != nil {
+		return QueryFailed
+	}
+	if old != password {
+		return PasswordInvalid
+	}
+
+	update := "UPDATE `users`.`basic_info` SET `Password` = ? WHERE `UserId` = ?"
+	if _, err := tx.Exec(update, new, uid); err != nil {
+		fmt.Println("Error", err)
+		return OperationFailed
+	}
+	defer tx.Commit()
 	return OperationSuccess
 }

@@ -31,7 +31,7 @@ func RedisInsert(db int, key string, fields map[string]interface{}) (int, int) {
 	// confirm if exists
 	val, err := cli.HGetAll(key).Result()
 	if err != nil {
-		return GetFailed, OperationFailed
+		return QueryFailed, OperationFailed
 	}
 	if len(val) != 0 {
 		insertStatus = InsertKeyExists
@@ -65,7 +65,7 @@ func RedisLookup(db int, key string) (*map[string]string, int) {
 
 	val, err := cli.HGetAll(key).Result()
 	if err != nil {
-		return nil, GetFailed
+		return nil, QueryFailed
 	}
 	if len(val) == 0 {
 		return nil, GetKeyNotExist

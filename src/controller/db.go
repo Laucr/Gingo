@@ -2,20 +2,22 @@ package controller
 
 // Database operation return code
 const (
-	OperationSuccess = 0
-	OperationFailed  = -1
-	CloseErr         = -11
-	ConnectErr       = -10
-	InsertFailed     = -100
-	InsertSuccess    = 100
-	InsertKeyExists  = -101
-	GetFailed        = -200
-	GetKeyNotExist   = -201
-	SessionExists    = -301
-	TelExists		 = -51
-	EmailExists	     = -52
+	OperationSuccess  = 0
+	OperationFailed   = -1
+	CloseErr          = -11
+	ConnectErr        = -10
+	InsertFailed      = -100
+	InsertSuccess     = 100
+	InsertKeyExists   = -101
+	QueryFailed       = -200
+	GetKeyNotExist    = -201
+	QueryRowNotExists = -202
+	SessionExists     = -301
+	TelExists         = -51
+	EmailExists       = -52
+	SQLiParameter     = -202
+	PasswordInvalid   = -1000
 )
-
 
 // Databases
 const (
