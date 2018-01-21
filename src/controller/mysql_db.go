@@ -40,7 +40,7 @@ func SQLiProof(str string) int {
 	return OperationSuccess
 }
 
-func SelectUserBasicInfo(key string, value string) (int, int) {
+func GetUid(key string, value string) (int, int) {
 	db, e := connectMysql(MysqlDB)
 	uid := 0
 	if SQLiProof(value) != OperationSuccess {
@@ -146,4 +146,28 @@ func UpdatePassword(old string, new string, uid int) int {
 	}
 	defer tx.Commit()
 	return OperationSuccess
+}
+
+func CheckPassword(uid int, password string) int {
+	db, e := connectMysql(MysqlDB)
+	if db == nil {
+		fmt.Println("Error Code", e)
+		return ConnectErr
+	}
+
+	query := "SELECT Password FROM `users`.`basic_info` WHERE `UserId` = ?"
+	row := db.QueryRow(query, uid)
+
+	if row == nil {
+		return QueryRowNotExists
+	}
+
+	var userPassword string
+	if err := row.Scan(&userPassword); err != nil {
+		return QueryFailed
+	}
+	if userPassword == password {
+		return PasswordInvalid
+	}
+	return PasswordCorrect
 }

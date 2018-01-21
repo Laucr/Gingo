@@ -1,15 +1,19 @@
 package controller
 
-func CreateSession(userName string) int {
+const (
+	DefaultSessionId = 0
+)
 
-	val, _ := RedisLookup(DbSession, userName)
-	if val != nil {
-		return SessionExists
-	}
+func CreateSession(uid int) int {
+
+	//val, _ := RedisLookup(DbSession, userName)
+	//if val != nil {
+	//	return SessionExists
+	//}
 	return OperationSuccess
 }
 
-func CheckSession(userName string) int {
+func CheckSession(sessionId int) int {
 
 	return OperationSuccess
 }

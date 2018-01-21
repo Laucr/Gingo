@@ -12,33 +12,27 @@ const (
 )
 
 func PostLogin(c *gin.Context) {
-	user := new(Users)
-	user.UserName = c.PostForm("UserName")
-	user.Password = c.PostForm("Password")
-	userSomeone, err := login(user.UserName, user.Password)
-	if err == LoginSuccess {
-		c.JSON(http.StatusOK, gin.H{
-			"status":   LoginSuccess,
-			"UserName": userSomeone.UserName,
-			"UserId":   userSomeone.UserId})
-	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"status": LoginFailed})
-	}
+	//user := new(Users)
+	//user.UserName = c.PostForm("UserName")
+	//user.Password = c.PostForm("Password")
+	//userSomeone, err := login(user.UserName, user.Password)
+	//if err == LoginSuccess {
+	//	c.JSON(http.StatusOK, gin.H{
+	//		"status":   LoginSuccess,
+	//		"UserName": userSomeone.UserName,
+	//		"UserId":   userSomeone.UserId})
+	//} else {
+	//	c.JSON(http.StatusOK, gin.H{
+	//		"status": LoginFailed})
+	//}
 
 }
 
-func login(username string, password string) (*Users, int) {
+func login(uid int, password string) (int, int) {
 	// compare with database
-	val, err := RedisLookup(DbUsers, username)
-	if val == nil {
-		fmt.Println("Error:", err)
-		return nil, LoginFailed
+	if CheckPassword(uid, password) == PasswordInvalid {
+		return LoginFailed, DefaultSessionId
 	}
-	userSomeone := MapConvertToUser(*val)
-	if userSomeone.UserName == username && userSomeone.Password == password {
-		return userSomeone, LoginSuccess
-	} else {
-		return nil, LoginFailed
-	}
+	return LoginSuccess, CreateSession(uid)
+
 }

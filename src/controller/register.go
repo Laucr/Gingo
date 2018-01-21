@@ -26,7 +26,7 @@ func Register(c *gin.Context) {
 }
 
 func CheckEmailExistence(email string, c *gin.Context) {
-	if checkUid, err := SelectUserBasicInfo("Email", email); err != OperationSuccess || checkUid == 0 {
+	if checkUid, err := GetUid("Email", email); err != OperationSuccess || checkUid == 0 {
 		c.JSON(http.StatusOK, gin.H{
 			"status": EmailExists,
 			"error": err,
@@ -35,7 +35,7 @@ func CheckEmailExistence(email string, c *gin.Context) {
 }
 
 func CheckTelExistence(tel string, c *gin.Context) {
-	if checkUid, err := SelectUserBasicInfo("Email", tel); err != OperationSuccess || checkUid == 0 {
+	if checkUid, err := GetUid("Email", tel); err != OperationSuccess || checkUid == 0 {
 		c.JSON(http.StatusOK, gin.H{
 			"status": TelExists,
 			"error": err,

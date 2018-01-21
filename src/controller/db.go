@@ -17,15 +17,11 @@ const (
 	EmailExists       = -52
 	SQLiParameter     = -202
 	PasswordInvalid   = -1000
+	PasswordCorrect   = 1000
 )
 
 // Databases
 const (
-	DbUsers    = 0
-	DbEmail    = 1
-	DbTel      = 2
-	DbUserInfo = 3
-	DbSession  = 4
-
+	DbSession    = 0
 	MysqlDB = "gingo:gingo@tcp(127.0.0.1:3306)/users?charset=utf8"
 )
