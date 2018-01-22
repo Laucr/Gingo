@@ -8,10 +8,10 @@ Install Mysql according to [Mysql](https://www.mysql.com/).
 Set your **gopath** and **goroot**.
 
 ## Dependencies
-**Gin**
-<pre><code>$ go get github.com/gin-gonic/gin</code></pre>
-**Redis**
-<pre><code>$ go get github.com/go-redis/redis</code></pre>
+  
+<pre><code>$ go get github.com/gin-gonic/gin  
+$ go get github.com/go-redis/redis  
+$ go get github.com/go-sql-driver/mysql</code></pre>
 
 ## Especially for [GoLand](https://www.jetbrains.com/go/) users  
 > First, you should add your work dir into the gopath.  
