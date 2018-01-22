@@ -2,7 +2,8 @@
 
 ## Setup
 Install Golang environment as [Go](https://golang.org/).  
-Install Redis according as [Redis](https://redis.io/).  
+Install Redis according to [Redis](https://redis.io/).  
+Install Mysql according to [Mysql](https://www.mysql.com/).
   
 Set your **gopath** and **goroot**.
 
