@@ -24,6 +24,10 @@ func CreateSession(userInfo string) (string, int) {
 }
 
 func GetSession(sessionId string) (*string, int) {
+	ttl, _ := CheckExpire(DbSession, sessionId)
+	if ttl < 0 {
+		return nil, SessionExpired
+	}
 	j, err := RedisSelect(DbSession, sessionId)
 	if j == nil || err != OperationSuccess {
 		return nil, err
@@ -31,10 +35,14 @@ func GetSession(sessionId string) (*string, int) {
 	return j, OperationSuccess
 }
 
-func DestorySession(sessionId string) int {
-	return OperationSuccess
-}
-
 func ExpireSession(sessionId string) int {
+	ttl, _ := CheckExpire(DbSession, sessionId)
+	if ttl < 0 {
+		return SessionExpired
+	}
+	res, err := ExpireKey(DbSession, sessionId)
+	if res == false || err != OperationSuccess {
+		return OperationFailed
+	}
 	return OperationSuccess
 }

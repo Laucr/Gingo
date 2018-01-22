@@ -28,13 +28,13 @@ type JsonClosure struct {
 	js string
 }
 
-//func JsonConvertToMap(j *JsonClosure) (map[string]interface{}, int) {
-//	var ret map[string]interface{}
-//	if err := json.Unmarshal([]byte(j.js), &ret); err != nil {
-//		return nil, OperationFailed
-//	}
-//	return ret, OperationSuccess
-//}
+func JsonConvertToMap(j *JsonClosure) (map[string]interface{}, int) {
+	var ret map[string]interface{}
+	if err := json.Unmarshal([]byte(j.js), &ret); err != nil {
+		return nil, OperationFailed
+	}
+	return ret, OperationSuccess
+}
 
 func ObjConvertToJson(v interface{}) string {
 	var j string
@@ -42,20 +42,3 @@ func ObjConvertToJson(v interface{}) string {
 	j = string(b)
 	return j
 }
-
-//func UsersConvertToMap(user *Users) map[string]interface{} {
-//	fields := make(map[string]interface{})
-//	fields["UserName"] = user.UserName
-//	fields["UserId"] = user.UserId
-//	// TODO: encrypt Password here
-//	fields["Password"] = user.Password
-//	return fields
-//}
-
-//func MapConvertToUser(fields map[string]string) *Users {
-//	u := new(Users)
-//	u.UserName = fields["UserName"]
-//	u.Password = fields["Password"]
-//	u.UserId, _ = strconv.ParseInt(fields["UserId"], 10, 64)
-//	return u
-//}

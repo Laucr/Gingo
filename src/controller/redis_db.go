@@ -23,23 +23,12 @@ func connectRedis(db int) (*redis.Client, int) {
 }
 
 func RedisInsert(db int, key string, j string, exp time.Duration) (int, int) {
-	//insertStatus := 0
 	cli, e := connectRedis(db)
 	if cli == nil {
 		fmt.Println("Error:", e)
 		return ConnectErr, OperationFailed
 	}
-	// confirm if exists
-	//val, err := cli.Get(key).Result()
-	//if err != nil {
-	//	return QueryFailed, OperationFailed
-	//}
-	//if len(val) != 0 {
-	//	insertStatus = InsertKeyExists
-	//	return insertStatus, OperationFailed
-	//}
 
-	// insert data
 	var lock sync.Mutex
 	lock.Lock()
 	_, err := cli.Set(key, j, exp).Result()
@@ -48,7 +37,6 @@ func RedisInsert(db int, key string, j string, exp time.Duration) (int, int) {
 	}
 	lock.Unlock()
 
-	// close client
 	err = cli.Close()
 	if err != nil {
 		return CloseErr, OperationFailed
@@ -60,7 +48,7 @@ func RedisSelect(db int, key string) (*string, int) {
 	cli, e := connectRedis(db)
 	if cli == nil {
 		fmt.Println("Error:", e)
-		return  nil, ConnectErr
+		return nil, ConnectErr
 	}
 
 	val, err := cli.Get(key).Result()
@@ -74,26 +62,33 @@ func RedisSelect(db int, key string) (*string, int) {
 
 	return &val, OperationSuccess
 }
-//func RedisLookup(db int, key string) (*map[string]string, int) {
-//
-//	cli, e := connectRedis(db)
-//	if cli == nil {
-//		fmt.Println("Error:", e)
-//		return nil, ConnectErr
-//	}
-//
-//	val, err := cli.HGetAll(key).Result()
-//	if err != nil {
-//		return nil, QueryFailed
-//	}
-//	if len(val) == 0 {
-//		return nil, GetKeyNotExist
-//	}
-//
-//	err = cli.Close()
-//	if err != nil {
-//		return nil, OperationFailed
-//	}
-//
-//	return &val, OperationSuccess
-//}
+
+func CheckExpire(db int, key string) (int, int) {
+	ttl := 0
+	cli, e := connectRedis(db)
+	if cli == nil {
+		fmt.Println("Error:", e)
+		return ttl, ConnectErr
+	}
+
+	dur, err := cli.TTL(key).Result()
+	if err != nil {
+		return -2, OperationFailed
+	}
+	return int(dur.Seconds()), OperationSuccess
+}
+
+func ExpireKey(db int, key string) (bool, int) {
+	cli, e := connectRedis(db)
+	if cli == nil {
+		fmt.Println("Error:", e)
+		return false, ConnectErr
+	}
+
+	res, err := cli.Expire(key, 0).Result()
+	if err != nil {
+		fmt.Println("Error", err)
+		return res, OperationFailed
+	}
+	return res, OperationSuccess
+}
