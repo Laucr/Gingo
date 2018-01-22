@@ -18,6 +18,7 @@ const (
 	SQLiParameter     = -202
 	PasswordInvalid   = -1000
 	PasswordCorrect   = 1000
+	LackOfAdvInfo	  = 60
 )
 
 // Databases

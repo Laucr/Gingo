@@ -4,6 +4,7 @@ import (
 	"github.com/go-redis/redis"
 	"fmt"
 	"sync"
+	"time"
 )
 
 func connectRedis(db int) (*redis.Client, int) {
@@ -21,27 +22,27 @@ func connectRedis(db int) (*redis.Client, int) {
 	return client, OperationSuccess
 }
 
-func RedisInsert(db int, key string, fields map[string]interface{}) (int, int) {
-	insertStatus := 0
+func RedisInsert(db int, key string, j string, exp time.Duration) (int, int) {
+	//insertStatus := 0
 	cli, e := connectRedis(db)
 	if cli == nil {
 		fmt.Println("Error:", e)
 		return ConnectErr, OperationFailed
 	}
 	// confirm if exists
-	val, err := cli.HGetAll(key).Result()
-	if err != nil {
-		return QueryFailed, OperationFailed
-	}
-	if len(val) != 0 {
-		insertStatus = InsertKeyExists
-		return insertStatus, OperationFailed
-	}
+	//val, err := cli.Get(key).Result()
+	//if err != nil {
+	//	return QueryFailed, OperationFailed
+	//}
+	//if len(val) != 0 {
+	//	insertStatus = InsertKeyExists
+	//	return insertStatus, OperationFailed
+	//}
 
 	// insert data
 	var lock sync.Mutex
 	lock.Lock()
-	_, err = cli.HMSet(key, fields).Result()
+	_, err := cli.Set(key, j, exp).Result()
 	if err != nil {
 		return InsertFailed, OperationFailed
 	}
@@ -55,26 +56,44 @@ func RedisInsert(db int, key string, fields map[string]interface{}) (int, int) {
 	return InsertSuccess, OperationSuccess
 }
 
-func RedisLookup(db int, key string) (*map[string]string, int) {
-
+func RedisSelect(db int, key string) (*string, int) {
 	cli, e := connectRedis(db)
 	if cli == nil {
 		fmt.Println("Error:", e)
-		return nil, ConnectErr
+		return  nil, ConnectErr
 	}
 
-	val, err := cli.HGetAll(key).Result()
+	val, err := cli.Get(key).Result()
 	if err != nil {
 		return nil, QueryFailed
+		fmt.Println(err)
 	}
 	if len(val) == 0 {
-		return nil, GetKeyNotExist
-	}
-
-	err = cli.Close()
-	if err != nil {
-		return nil, OperationFailed
+		return nil, QueryFailed
 	}
 
 	return &val, OperationSuccess
 }
+//func RedisLookup(db int, key string) (*map[string]string, int) {
+//
+//	cli, e := connectRedis(db)
+//	if cli == nil {
+//		fmt.Println("Error:", e)
+//		return nil, ConnectErr
+//	}
+//
+//	val, err := cli.HGetAll(key).Result()
+//	if err != nil {
+//		return nil, QueryFailed
+//	}
+//	if len(val) == 0 {
+//		return nil, GetKeyNotExist
+//	}
+//
+//	err = cli.Close()
+//	if err != nil {
+//		return nil, OperationFailed
+//	}
+//
+//	return &val, OperationSuccess
+//}

@@ -1,19 +1,40 @@
 package controller
 
-const (
-	DefaultSessionId = 0
+import (
+	"time"
+	"strconv"
 )
 
-func CreateSession(uid int) int {
+const (
+	DefaultSessionId = ""
+)
 
-	//val, _ := RedisLookup(DbSession, userName)
-	//if val != nil {
-	//	return SessionExists
-	//}
+func CreateSession(userInfo string) (string, int) {
+	sessionId := strconv.FormatInt(time.Now().Unix(), 64)
+	expireTime := 24 * time.Hour
+
+	insErr, opErr := RedisInsert(DbSession,
+		sessionId,
+		userInfo,
+		expireTime)
+	if insErr != InsertSuccess || opErr != OperationSuccess {
+		return DefaultSessionId, OperationFailed
+	}
+	return sessionId, OperationSuccess
+}
+
+func GetSession(sessionId string) (*string, int) {
+	j, err := RedisSelect(DbSession, sessionId)
+	if j == nil || err != OperationSuccess {
+		return nil, err
+	}
+	return j, OperationSuccess
+}
+
+func DestorySession(sessionId string) int {
 	return OperationSuccess
 }
 
-func CheckSession(sessionId int) int {
-
+func ExpireSession(sessionId string) int {
 	return OperationSuccess
 }
